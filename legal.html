@@ -1,0 +1,2098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Legal Evaluation Report – Solitaire Finz Mart</title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <style>
+        @media print {
+            .app-shell {
+                display: none !important;
+            }
+            .print-report {
+                display: block !important;
+            }
+            body {
+                background: #fff !important;
+            }
+            .print-report .row {
+                margin: 2px 0;
+                font-size: 11px;
+                text-align: left;
+            }
+            .print-report .section-title {
+                font-size: 13px;
+                border-bottom: 1px solid #333;
+                padding-bottom: 3px;
+                margin-top: 16px;
+                margin-bottom: 6px;
+                text-align: left;
+            }
+        }
+        .print-report {
+            display: none;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f3f4f6;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        .print-report .row {
+            margin: 2px 0;
+            font-size: 11px;
+            text-align: left;
+        }
+        .print-report .section-title {
+            font-size: 13px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 3px;
+            margin-top: 16px;
+            margin-bottom: 6px;
+            text-align: left;
+        }
+        .accordion-transition {
+            transition: all 0.2s ease;
+        }
+        .theme-transition {
+            transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+        .risk-pill {
+            padding: 2px 10px;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .risk-pill.Low {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .risk-pill.Medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .risk-pill.High {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .dark .risk-pill.Low {
+            background: #14532d;
+            color: #86efac;
+        }
+        .dark .risk-pill.Medium {
+            background: #78350f;
+            color: #fde68a;
+        }
+        .dark .risk-pill.High {
+            background: #7f1d1d;
+            color: #fca5a5;
+        }
+        .dark body {
+            background: #0b1220;
+        }
+        .dark .panel-bg {
+            background: #141c2c;
+        }
+        .dark .head-bg {
+            background: #101828;
+        }
+        .dark .text-primary {
+            color: #e5e7eb;
+        }
+        .dark .text-muted {
+            color: #94a3b8;
+        }
+        .dark .border-color {
+            border-color: #2a3548;
+        }
+        .dark .input-bg {
+            background: #0f1728;
+            color: #e5e7eb;
+        }
+        .dark .input-disabled {
+            background: #1a2334;
+            color: #94a3b8;
+        }
+        .dark .header-bg {
+            background: #0a0f1a;
+        }
+        .dark .accent-soft {
+            background: #1e2440;
+        }
+        .dark .bar-bg {
+            background: #141c2c;
+        }
+        .dark .page-bg {
+            background: #0b1220;
+        }
+        .dark .text-white-custom {
+            color: #f1f5f9;
+        }
+        .dark .text-sub {
+            color: #94a3b8;
+        }
+        .dark .border-subtle {
+            border-color: #2a3548;
+        }
+        .dark .bg-red-soft {
+            background: #7f1d1d;
+            color: #fca5a5;
+        }
+        .dark .bg-amber-soft {
+            background: #78350f;
+            color: #fde68a;
+        }
+        .dark .bg-green-soft {
+            background: #14532d;
+            color: #86efac;
+        }
+        .dark .shadow-custom {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app"></div>
+
+    <script>
+        // ============================================================
+        //  BRAND CONSTANTS
+        // ============================================================
+        const BRAND = {
+            company: "SOLITAIRE PROJECT AND FINANCE",
+            brand: "SOLITAIRE FINZ MART",
+            tagline: "DSA Loan Products | 15+ Years of Trusted Service",
+            address: "Shop No. 8, Janaram Niwas, Purna, Bhiwandi 421302",
+            whatsapp: "8779023084",
+            email: "sachinkale241981@gmail.com",
+            logo: "SFM",
+        };
+
+        const LOAN_TYPES = ["Home Loan", "LAP", "Balance Transfer", "Construction", "Refinance"];
+        const MORTGAGE_PURPOSE = ["Home loan", "LAP", "Business loan security", "Working capital security"];
+        const PROPERTY_TYPES = ["Plot", "Flat", "House", "Commercial", "Industrial", "Agricultural", "Leasehold",
+            "Freehold"
+        ];
+        const LOOKBACK_YEARS = 13;
+
+        const DOC_CHECKLIST_TEMPLATE = [
+            "Previous sale deed(s) / conveyance deed(s)",
+            "Chain of title documents (13-yr lookback)",
+            "Mutation / revenue records (7/12, Mutation Entry, Patta)",
+            "Will / Gift / Partition / Release / Settlement deed",
+            "Sale agreement / allotment letter (flats)",
+            "Builder-Buyer Agreement / Construction Agreement",
+            "Encumbrance Certificate (EC)",
+            "Property tax paid receipts (latest + previous yr)",
+            "Approved building plan / Layout approval",
+            "Occupancy Certificate (OC) / Completion Certificate (CC)",
+            "Society / Builder NOC for mortgage",
+            "Conversion order (agri to non-agri)",
+            "RERA registration details & status",
+            "KYC of property owner(s): PAN, Aadhaar",
+        ];
+
+        const uid = () => Math.random().toString(36).slice(2, 9);
+        const todayISO = () => new Date().toISOString().slice(0, 10);
+        const yearsBetween = (d1, d2) => (new Date(d2) - new Date(d1)) / (365.25 * 24 * 3600 * 1000);
+        const genReportRef = (year = new Date().getFullYear(), seq = 1) =>
+            `SFM-LSR-${year}-${String(seq).padStart(3, "0")}`;
+
+        // ============================================================
+        //  SEED DATA
+        // ============================================================
+        function seedData() {
+            return {
+                meta: {
+                    reportRef: genReportRef(2026, 1),
+                    leadId: "SFM-LEAD-10457",
+                    reportDate: todayISO(),
+                    fileRef: "FR/2026/0457",
+                    status: "draft",
+                },
+                s1: {
+                    borrowerNames: "Rohit Sharma",
+                    coBorrowerNames: "Sunita Sharma",
+                    mortgagorNames: "Rohit Sharma",
+                    loanType: "Home Loan",
+                    mortgagePurpose: "Home loan",
+                    mortgageMode: "Equitable mortgage",
+                    advocateName: "Adv. Nilesh Patil",
+                    panelCode: "PNL-0092",
+                    fileReference: "FR/2026/0457",
+                },
+                s2: {
+                    address: "Flat No. 302, Shreeji Heights, Near Anand Nagar, Bhiwandi, Thane",
+                    propertyType: "Flat",
+                    surveyCts: "CTS No. 245/A, Flat No. 302, Shreeji Heights",
+                    locality: "Anand Nagar",
+                    taluka: "Bhiwandi",
+                    district: "Thane",
+                    state: "Maharashtra",
+                    pincode: "421302",
+                    areaBuiltUp: "685",
+                    areaLand: "",
+                    boundaries: { north: "Internal Road", south: "Society Garden", east: "Flat No. 301",
+                        west: "Open Space" },
+                    landmark: "Near Anand Nagar Bus Stop",
+                },
+                s3: DOC_CHECKLIST_TEMPLATE.map((name) => ({
+                    id: uid(),
+                    name: name,
+                    upload: null,
+                    copyType: "Xerox",
+                    verified: name.includes("EC") || name.includes("KYC") ? true : false,
+                    remarks: "",
+                })).concat([{ id: uid(), name: "", upload: null, copyType: "Xerox", verified: false, remarks: "",
+                    custom: true }]),
+                s4: {
+                    rows: [
+                        { id: uid(), date: "2008-04-12", transferor: "Shreeji Developers", transferee: "Ramesh Kale",
+                            docType: "Sale Deed", regDetails: "Reg No. 4521/2008" },
+                        { id: uid(), date: "2015-06-20", transferor: "Ramesh Kale", transferee: "Rohit Sharma",
+                            docType: "Sale Deed", regDetails: "Reg No. 3312/2015" },
+                    ],
+                    lookbackConfirmed: "Yes",
+                },
+                s5: {
+                    searchFrom: "2013-01-01",
+                    searchTo: "2026-07-01",
+                    encumbranceFound: "No",
+                    encumbranceType: "",
+                    outstandingAmount: "",
+                    searchBy: "Adv. Nilesh Patil",
+                    searchAt: "SRO Bhiwandi",
+                    searchDate: "2026-07-10",
+                    remarks: "No adverse entries found in the search period.",
+                },
+                s6: {
+                    taxUpToDate: "Yes",
+                    electricityWaterInOwnerName: "Yes",
+                    maintenanceDuesCleared: "Yes",
+                    statutoryDuesPending: "No",
+                    statutoryDuesAmount: "",
+                    approvedPlanAvailable: "Yes",
+                    ocCcAvailable: "Yes",
+                    unauthorizedConstruction: "No",
+                    unauthorizedDetails: "",
+                    conversionOrderObtained: "NA",
+                },
+                s7: {
+                    litigationPending: "No",
+                    courtName: "",
+                    caseNo: "",
+                    parties: "",
+                    caseStatus: "",
+                    nextHearing: "",
+                    revenueNotice: "No",
+                    revenueNoticeDetails: "",
+                    arbitrationPending: "No",
+                    arbitrationDetails: "",
+                },
+                s8: {
+                    titleStatus: "Clear",
+                    ownerCapacity: "Confirmed",
+                    poaValid: "NA",
+                    freeFromEncumbrance: "Yes",
+                    thirdPartyNocRequired: "No",
+                    thirdPartyNocFrom: "",
+                    conditions: [{ id: uid(), text: "Obtain updated property tax receipt", dueDate: "2026-08-01" }],
+                },
+                s9: {
+                    finalOpinion: "Fit subject to conditions",
+                    conclusion: "",
+                    advocateSignName: "Adv. Nilesh Patil",
+                    signatureUpload: null,
+                    barCouncilNo: "MAH/1234/2010",
+                    signOffDate: todayISO(),
+                },
+                s10: {
+                    adminDecision: "",
+                    adminComments: "",
+                    reviewer: "",
+                    approvedAt: "",
+                },
+            };
+        }
+
+        // ============================================================
+        //  OPINION TEMPLATES
+        // ============================================================
+        function opinionTemplate(opinion, meta) {
+            switch (opinion) {
+                case "Property is fit for mortgage":
+                    return `Based on the documents produced and title search conducted, the property bearing reference ${meta.reportRef} is found to have a clear and marketable title, free from encumbrances, and is fit to be accepted as security for the mortgage loan.`;
+                case "Not fit for mortgage":
+                    return `Based on the documents produced and title search conducted, the property bearing reference ${meta.reportRef} suffers from material title defects / encumbrances and is NOT fit to be accepted as security for the mortgage loan until such defects are cured.`;
+                case "Fit subject to conditions":
+                    return `Based on the documents produced and title search conducted, the property bearing reference ${meta.reportRef} is fit to be accepted as security for the mortgage loan, subject to the conditions precedent listed in Section 8 being complied with prior to disbursement.`;
+                default:
+                    return "";
+            }
+        }
+
+        const DISCLAIMER =
+            "This report is based on documents produced and search conducted as on the date of report; any suppression, defect, or subsequent change in title or possession may affect enforceability.";
+
+        // ============================================================
+        //  RISK ENGINE
+        // ============================================================
+        function computeRisk(data) {
+            const docsTotal = data.s3.filter(function(d) { return d.name; }).length;
+            const docsVerified = data.s3.filter(function(d) { return d.name && d.verified; }).length;
+            const docCompletenessPct = docsTotal ? docsVerified / docsTotal : 0;
+            const documentCompleteness = docCompletenessPct > 0.85 ? "Low" : docCompletenessPct > 0.6 ? "Medium" :
+            "High";
+
+            const titleRisk =
+                data.s8.titleStatus === "Clear" && data.s4.lookbackConfirmed === "Yes" ?
+                "Low" :
+                data.s8.titleStatus === "Conditional" ? "Medium" : "High";
+
+            const encumbranceRisk = data.s5.encumbranceFound === "Yes" ? (data.s5.outstandingAmount ? "High" :
+                "Medium") : "Low";
+
+            const litigationRisk =
+                data.s7.litigationPending === "Yes" ? "High" : data.s7.revenueNotice === "Yes" || data.s7
+                .arbitrationPending === "Yes" ? "Medium" : "Low";
+
+            const missingDocs = data.s3.filter(function(d) { return d.name && !d.verified; }).map(function(d) { return d
+                    .name; });
+
+            const scoreMap = { Low: 1, Medium: 2, High: 3 };
+            const overallScore = scoreMap[titleRisk] + scoreMap[documentCompleteness] + scoreMap[encumbranceRisk] +
+                scoreMap[litigationRisk];
+            const overall = overallScore <= 5 ? "green" : overallScore <= 8 ? "amber" : "red";
+
+            return { titleRisk: titleRisk, documentCompleteness: documentCompleteness, encumbranceRisk: encumbranceRisk,
+                litigationRisk: litigationRisk, missingDocs: missingDocs, overall: overall };
+        }
+
+        // ============================================================
+        //  VALIDATION
+        // ============================================================
+        function validate(data) {
+            var errors = {};
+            if (!data.s1.borrowerNames) errors.borrowerNames = "Borrower name is mandatory";
+            if (!data.s2.address) errors.address = "Property address is mandatory";
+            if (!data.s2.pincode || !/^\d{6}$/.test(data.s2.pincode)) errors.pincode = "Enter a valid 6-digit pincode";
+
+            if (data.s5.searchFrom && data.s5.searchTo && new Date(data.s5.searchFrom) >= new Date(data.s5.searchTo)) {
+                errors.searchDates = "EC search 'from' date must be before 'to' date";
+            }
+            if (data.s5.searchFrom && data.s5.searchTo) {
+                var span = yearsBetween(data.s5.searchFrom, data.s5.searchTo);
+                if (span < LOOKBACK_YEARS - 0.1) {
+                    errors.ecLookback = "EC period covers only " + span.toFixed(1) + " yrs — minimum " + LOOKBACK_YEARS +
+                        " yrs required";
+                }
+            }
+            if (data.s4.rows.length) {
+                var first = data.s4.rows[0];
+                var span2 = yearsBetween(first.date, todayISO());
+                if (span2 < LOOKBACK_YEARS - 0.1) {
+                    errors.titleLookback = "Title chain lookback is only " + span2.toFixed(1) +
+                    " yrs — minimum " + LOOKBACK_YEARS + " yrs required";
+                }
+                for (var i = 1; i < data.s4.rows.length; i++) {
+                    if (data.s4.rows[i - 1].transferee !== data.s4.rows[i].transferor) {
+                        errors["chainBreak" + i] = "Chain of title break detected between entry " + i + " and " + (i + 1);
+                    }
+                }
+            }
+            return errors;
+        }
+
+        // ============================================================
+        //  STATE
+        // ============================================================
+        var state = {
+            data: seedData(),
+            theme: "light",
+            role: "legal",
+            openSections: { s1: true },
+            syncStatus: navigator.onLine ? "online" : "offline",
+            lastSaved: null,
+            printMode: false,
+        };
+
+        var container = document.getElementById("app");
+
+        // ============================================================
+        //  HELPERS
+        // ============================================================
+        function getTheme() {
+            return state.theme;
+        }
+
+        function isDark() {
+            return state.theme === "dark";
+        }
+
+        function getData() {
+            return state.data;
+        }
+
+        function updateData(path, value) {
+            var data = state.data;
+            var keys = path.split(".");
+            var obj = data;
+            for (var i = 0; i < keys.length - 1; i++) {
+                obj = obj[keys[i]];
+            }
+            obj[keys[keys.length - 1]] = value;
+            state.data = data;
+            render();
+        }
+
+        function updateNested(path, key, value) {
+            var data = state.data;
+            var keys = path.split(".");
+            var obj = data;
+            for (var i = 0; i < keys.length; i++) {
+                obj = obj[keys[i]];
+            }
+            obj[key] = value;
+            state.data = data;
+            render();
+        }
+
+        function getVal(path) {
+            var data = state.data;
+            var keys = path.split(".");
+            var obj = data;
+            for (var i = 0; i < keys.length; i++) {
+                if (obj === undefined || obj === null) return "";
+                obj = obj[keys[i]];
+            }
+            return obj !== undefined && obj !== null ? obj : "";
+        }
+
+        function getNested(path, key) {
+            var data = state.data;
+            var keys = path.split(".");
+            var obj = data;
+            for (var i = 0; i < keys.length; i++) {
+                if (obj === undefined || obj === null) return "";
+                obj = obj[keys[i]];
+            }
+            return obj && obj[key] !== undefined ? obj[key] : "";
+        }
+
+        function toggleSection(key) {
+            state.openSections[key] = !state.openSections[key];
+            render();
+        }
+
+        function isOpen(key) {
+            return !!state.openSections[key];
+        }
+
+        function isReadOnly() {
+            var data = state.data;
+            var role = state.role;
+            var status = data.meta.status;
+            if (role === "agent") return true;
+            if (role === "legal" && (status === "submitted" || status === "under_review" || status === "approved"))
+            return true;
+            if (role === "admin" && status === "draft") return true;
+            return false;
+        }
+
+        function isLegal() { return state.role === "legal"; }
+
+        function isAdmin() { return state.role === "admin"; }
+
+        function sectionProgress() {
+            var data = state.data;
+            var pct = function(filled, total) {
+                return total ? Math.round((filled / total) * 100) : 100;
+            };
+            var s1 = data.s1;
+            var s1v = Object.values(s1).filter(function(v) { return v !== "" && v !== undefined && v !== null; })
+            .length;
+            var s1k = Object.keys(s1).length;
+            var s2 = data.s2;
+            var s2v = Object.values(s2).filter(function(v) {
+                if (typeof v === "object") {
+                    return Object.values(v).some(function(x) { return x !== "" && x !== undefined && x !== null; });
+                }
+                return v !== "" && v !== undefined && v !== null;
+            }).length;
+            var s2k = Object.keys(s2).length;
+            var s3 = data.s3;
+            var s3v = s3.filter(function(d) { return d.name && d.verified; }).length;
+            var s3t = s3.filter(function(d) { return d.name; }).length;
+            var s4 = data.s4;
+            var s4v = s4.rows.length ? 1 : 0;
+            var s5 = data.s5;
+            var s5v = Object.values(s5).filter(function(v) { return v !== "" && v !== undefined && v !== null; })
+            .length;
+            var s5k = Object.keys(s5).length;
+            var s6 = data.s6;
+            var s6v = Object.values(s6).filter(function(v) { return v !== "" && v !== undefined && v !== null; })
+            .length;
+            var s6k = Object.keys(s6).length;
+            var s7 = data.s7;
+            var s7v = Object.values(s7).filter(function(v) { return v !== "" && v !== undefined && v !== null; })
+            .length;
+            var s7k = Object.keys(s7).length;
+            var s8 = data.s8;
+            var s8v = Object.values(s8).filter(function(v) {
+                if (Array.isArray(v)) return v.length > 0;
+                return v !== "" && v !== undefined && v !== null;
+            }).length;
+            var s8k = Object.keys(s8).length;
+            var s9 = data.s9;
+            var s9v = Object.values(s9).filter(function(v) { return v !== "" && v !== undefined && v !== null; })
+            .length;
+            var s9k = Object.keys(s9).length;
+
+            return {
+                s1: pct(s1v, s1k),
+                s2: pct(s2v, s2k),
+                s3: pct(s3v, s3t || 1),
+                s4: pct(s4v, 1),
+                s5: pct(s5v, s5k),
+                s6: pct(s6v, s6k),
+                s7: pct(s7v, s7k),
+                s8: pct(s8v, s8k),
+                s9: pct(s9v, s9k),
+            };
+        }
+
+        function overallCompletion() {
+            var prog = sectionProgress();
+            var vals = Object.values(prog);
+            return Math.round(vals.reduce(function(a, b) { return a + b; }, 0) / vals.length);
+        }
+
+        function getRisk() {
+            return computeRisk(state.data);
+        }
+
+        function getErrors() {
+            return validate(state.data);
+        }
+
+        function getFinalOwner() {
+            var rows = state.data.s4.rows;
+            return rows.length ? rows[rows.length - 1].transferee : "—";
+        }
+
+        // ============================================================
+        //  RENDER FUNCTIONS
+        // ============================================================
+        function render() {
+            var data = state.data;
+            var dark = isDark();
+            var theme = dark ? "dark" : "light";
+            var readOnly = isReadOnly();
+            var risk = getRisk();
+            var errors = getErrors();
+            var prog = sectionProgress();
+            var overall = overallCompletion();
+            var finalOwner = getFinalOwner();
+
+            var html = "";
+
+            // ---- PRINT REPORT ----
+            html += renderPrintReport(data, risk, finalOwner);
+
+            // ---- APP SHELL ----
+            html += '<div class="app-shell min-h-screen pb-24 page-bg" style="' +
+                (dark ? 'background:#0b1220;' : 'background:#f3f4f6;') + '">';
+
+            // ---- HEADER ----
+            html += renderHeader(data, dark, overall, risk);
+
+            // ---- MAIN ----
+            html +=
+                '<main class="max-w-3xl mx-auto px-3 pt-4" style="' +
+                (dark ? 'color:#e5e7eb;' : 'color:#1f2937;') + '">';
+
+            // Section 1
+            html += renderSection1(data, dark, readOnly, errors, prog);
+
+            // Section 2
+            html += renderSection2(data, dark, readOnly, errors, prog);
+
+            // Section 3
+            html += renderSection3(data, dark, readOnly, errors, prog);
+
+            // Section 4
+            html += renderSection4(data, dark, readOnly, errors, prog, finalOwner);
+
+            // Section 5
+            html += renderSection5(data, dark, readOnly, errors, prog);
+
+            // Section 6
+            html += renderSection6(data, dark, readOnly, prog);
+
+            // Section 7
+            html += renderSection7(data, dark, readOnly, prog);
+
+            // Section 8
+            html += renderSection8(data, dark, readOnly, risk, prog);
+
+            // Section 9
+            html += renderSection9(data, dark, readOnly, prog);
+
+            // Section 10 (admin only)
+            if (isAdmin()) {
+                html += renderSection10(data, dark, readOnly);
+            }
+
+            html += '</main>';
+
+            // ---- STICKY BAR ----
+            html += renderStickyBar(data, dark, overall, risk, readOnly);
+
+            html += '</div>';
+
+            container.innerHTML = html;
+            attachEvents();
+        }
+
+        // ============================================================
+        //  RENDER: PRINT REPORT
+        // ============================================================
+        function renderPrintReport(data, risk, finalOwner) {
+            var html = '<div class="print-report" style="font-family:Arial,sans-serif;color:#111;padding:24px;text-align:left;">';
+            html +=
+                '<div style="background:#1e293b;color:#fff;padding:14px 18px;margin-bottom:10px;text-align:left;">';
+            html += '<div style="font-weight:bold;font-size:16px;">' + BRAND.brand + '</div>';
+            html += '<div style="font-size:9px;">' + BRAND.company + ' | ' + BRAND.tagline + '</div>';
+            html += '<div style="font-size:9px;">' + BRAND.address + ' | WhatsApp: ' + BRAND.whatsapp + ' | ' + BRAND
+                .email + '</div>';
+            html += '</div>';
+            html += '<h1 style="font-size:15px;margin-bottom:2px;text-align:left;">LEGAL EVALUATION REPORT (LSR)</h1>';
+
+            var rows = [
+                ["Report Ref", data.meta.reportRef],
+                ["Lead ID", data.meta.leadId],
+                ["Report Date", data.meta.reportDate],
+                ["Status", data.meta.status.toUpperCase()],
+                ["", ""],
+                ["1. Case Identification", ""],
+                ["Borrower(s)", data.s1.borrowerNames],
+                ["Co-borrower / Guarantor", data.s1.coBorrowerNames],
+                ["Mortgagor(s)", data.s1.mortgagorNames],
+                ["Loan Type", data.s1.loanType],
+                ["Mortgage Purpose", data.s1.mortgagePurpose],
+                ["Mode of Mortgage", data.s1.mortgageMode],
+                ["Advocate", data.s1.advocateName + " (Panel " + data.s1.panelCode + ")"],
+                ["", ""],
+                ["2. Property Identification", ""],
+                ["Address", data.s2.address],
+                ["Type", data.s2.propertyType],
+                ["Survey / CTS", data.s2.surveyCts],
+                ["Locality", data.s2.locality + ", " + data.s2.taluka + ", " + data.s2.district + ", " + data.s2
+                    .state + " - " + data.s2.pincode],
+                ["Area", "Built-up " + data.s2.areaBuiltUp + " sqft / Land " + data.s2.areaLand + " sqm"],
+                ["Boundaries", "N: " + data.s2.boundaries.north + ", S: " + data.s2.boundaries.south + ", E: " +
+                    data.s2.boundaries.east + ", W: " + data.s2.boundaries.west],
+                ["", ""],
+                ["3. Document Scrutiny", ""],
+            ];
+            data.s3.filter(function(d) { return d.name; }).forEach(function(d) {
+                rows.push([(d.verified ? "✔" : "✘") + " " + d.name, d.copyType + (d.remarks ? " — " + d.remarks :
+                "")]);
+            });
+            rows.push(["", ""]);
+            rows.push(["4. Title Flow / Ownership History", ""]);
+            data.s4.rows.forEach(function(r) {
+                rows.push([r.date, r.transferor + " → " + r.transferee + " (" + r.docType + ", " + r
+                    .regDetails + ")"]);
+            });
+            rows.push(["Final Owner of Record", finalOwner]);
+            rows.push(["13-yr Lookback Confirmed", data.s4.lookbackConfirmed]);
+            rows.push(["", ""]);
+            rows.push(["5. Encumbrance & Search Findings", ""]);
+            rows.push(["EC Period", data.s5.searchFrom + " to " + data.s5.searchTo]);
+            rows.push(["Encumbrance Found", data.s5.encumbranceFound]);
+            rows.push(["Search", "By " + data.s5.searchBy + " at " + data.s5.searchAt + " on " + data.s5
+            .searchDate]);
+            rows.push(["Remarks", data.s5.remarks]);
+            rows.push(["", ""]);
+            rows.push(["6. Statutory & Tax Status", ""]);
+            rows.push(["Tax up to date", data.s6.taxUpToDate]);
+            rows.push(["OC/CC available", data.s6.ocCcAvailable]);
+            rows.push(["Unauthorized construction", data.s6.unauthorizedConstruction]);
+            rows.push(["", ""]);
+            rows.push(["7. Litigation Search", ""]);
+            rows.push(["Litigation pending", data.s7.litigationPending]);
+            rows.push(["Revenue / Municipal notice", data.s7.revenueNotice]);
+            rows.push(["", ""]);
+            rows.push(["8. Mortgageability Assessment", ""]);
+            rows.push(["Title Status", data.s8.titleStatus]);
+            rows.push(["Owner Capacity", data.s8.ownerCapacity]);
+            rows.push(["Litigation Flag", data.s7.litigationPending === "Yes" ? "Pending" : "Clear"]);
+            rows.push(["Risk — Title / Docs / Encumbrance / Litigation", risk.titleRisk + " / " + risk
+                .documentCompleteness + " / " + risk.encumbranceRisk + " / " + risk.litigationRisk
+            ]);
+            if (risk.missingDocs.length > 0) {
+                rows.push(["Missing / Unverified Docs", risk.missingDocs.join(", ")]);
+            }
+            data.s8.conditions.forEach(function(c) {
+                rows.push(["Condition precedent", c.text + " (Due: " + c.dueDate + ")"]);
+            });
+            rows.push(["", ""]);
+            rows.push(["9. Final Legal Opinion", ""]);
+            rows.push(["Opinion", data.s9.finalOpinion]);
+            rows.push(["", data.s9.conclusion]);
+            rows.push(["", DISCLAIMER]);
+            rows.push(["Advocate", data.s9.advocateSignName + " | Bar Council No: " + data.s9.barCouncilNo +
+                " | Date: " + data.s9.signOffDate]);
+
+            rows.forEach(function(r) {
+                if (r[0] === "" && r[1] === "") {
+                    html += '<div style="height:4px;"></div>';
+                } else if (r[0].match(/^\d\./)) {
+                    html +=
+                        '<h2 style="font-size:13px;border-bottom:1px solid #333;padding-bottom:3px;margin-top:16px;margin-bottom:6px;text-align:left;">' +
+                        r[0] + '</h2>';
+                } else {
+                    html +=
+                        '<p class="row" style="margin:2px 0;font-size:11px;text-align:left;"><strong>' + r[
+                            0] + ':</strong> ' + (r[1] || "—") + '</p>';
+                }
+            });
+
+            html +=
+                '<p style="font-size:8px;color:#555;margin-top:20px;border-top:1px solid #ccc;padding-top:6px;text-align:left;">' +
+                BRAND.company + " — " + BRAND.address + " — " + BRAND.whatsapp + " — " + BRAND.email + '</p>';
+            html += '</div>';
+            return html;
+        }
+
+        // ============================================================
+        //  RENDER: HEADER
+        // ============================================================
+        function renderHeader(data, dark, overall, risk) {
+            var headerBg = dark ? '#0a0f1a' : '#1e293b';
+            var headerText = dark ? '#f1f5f9' : '#ffffff';
+            var headerSub = dark ? '#94a3b8' : '#cbd5e1';
+
+            var riskColor = risk.overall === "green" ? "bg-green-500" : risk.overall === "amber" ? "bg-amber-500" :
+                "bg-red-500";
+
+            var html = '<header class="sticky top-0 z-30 text-white px-4 py-3 shadow" style="background:' + headerBg +
+                ';">';
+            html +=
+                '<div class="flex items-center justify-between max-w-3xl mx-auto gap-2">';
+            html +=
+                '<div class="flex items-center gap-2 min-w-0">';
+            html +=
+                '<div class="w-9 h-9 rounded-full bg-white text-slate-800 flex items-center justify-center font-bold text-xs flex-shrink-0">' +
+                BRAND.logo + '</div>';
+            html +=
+                '<div class="min-w-0">';
+            html += '<p class="font-bold text-sm leading-tight truncate" style="color:' + headerText + ';">' + BRAND
+                .brand + '</p>';
+            html += '<p class="text-xs leading-tight truncate" style="color:' + headerSub + ';">' + BRAND.tagline +
+                '</p>';
+            html += '</div></div>';
+            html +=
+                '<div class="flex items-center gap-2 flex-shrink-0">';
+            html +=
+                '<select id="roleSelect" class="text-xs rounded-lg border-none px-2 py-1.5" style="background:rgba(255,255,255,0.12);color:#fff;" title="Switch role view">';
+            html += '<option value="legal" style="color:#111;" ' + (state.role === "legal" ? "selected" : "") +
+                '>Legal Associate</option>';
+            html += '<option value="admin" style="color:#111;" ' + (state.role === "admin" ? "selected" : "") +
+                '>Admin</option>';
+            html += '<option value="agent" style="color:#111;" ' + (state.role === "agent" ? "selected" : "") +
+                '>Agent (view only)</option>';
+            html += '</select>';
+            html +=
+                '<button id="themeToggle" type="button" class="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style="background:rgba(255,255,255,0.12);color:#fff;" title="Toggle dark / light mode">';
+            html += dark ? "☀️" : "🌙";
+            html += '</button>';
+            html += '</div></div>';
+            html +=
+                '<div class="text-right text-xs leading-tight max-w-3xl mx-auto mt-1" style="color:' + headerSub +
+                ';">';
+            html += '<p>Ref: ' + data.meta.reportRef + ' · Lead: ' + data.meta.leadId + '</p>';
+            html += '</div>';
+            html +=
+                '<div class="max-w-3xl mx-auto flex items-center justify-between mt-1 text-xs" style="color:' +
+                headerSub + ';">';
+            html += '<span>Borrower: ' + (data.s1.borrowerNames || "—") + '</span>';
+            html += '<span class="capitalize">Status: ' + data.meta.status.replace(/_/g, " ") + '</span>';
+            html += '</div>';
+            html += '</header>';
+            return html;
+        }
+
+        // ============================================================
+        //  RENDER: ACCORDION WRAPPER
+        // ============================================================
+        function renderAccordion(title, sectionKey, content, prog, hasError, dark) {
+            var open = isOpen(sectionKey);
+            var panelBg = dark ? '#141c2c' : '#ffffff';
+            var headBg = dark ? '#101828' : '#f9fafb';
+            var border = dark ? '#2a3548' : '#d1d5db';
+            var text = dark ? '#e5e7eb' : '#1f2937';
+            var muted = dark ? '#94a3b8' : '#6b7280';
+            var errorColor = "#dc2626";
+
+            var html = '<div class="border rounded-xl mb-3 overflow-hidden shadow-sm" style="background:' + panelBg +
+                ';border-color:' + border + ';">';
+            html +=
+                '<button type="button" class="accordion-toggle w-full flex items-center justify-between px-4 py-3" data-section="' +
+                sectionKey + '" style="background:' + headBg + ';">';
+            html +=
+                '<div class="flex items-center gap-2">';
+            html += '<span class="font-semibold text-sm" style="color:' + (hasError ? errorColor : text) + ';">' +
+                title + '</span>';
+            if (hasError) html += '<span class="text-red-500 text-xs">⚠</span>';
+            html += '</div>';
+            html +=
+                '<div class="flex items-center gap-3">';
+            html +=
+                '<div class="w-16 h-2 rounded-full overflow-hidden" style="background:' + border + ';">';
+            html += '<div class="h-full bg-indigo-500" style="width:' + prog + '%;"></div>';
+            html += '</div>';
+            html += '<span class="text-xs w-8 text-right" style="color:' + muted + ';">' + prog + '%</span>';
+            html += '<span style="color:' + muted + ';">' + (open ? "▲" : "▼") + '</span>';
+            html += '</div></button>';
+            if (open) {
+                html += '<div class="p-4">' + content + '</div>';
+            }
+            html += '</div>';
+            return html;
+        }
+
+        // ============================================================
+        //  RENDER: SECTION 1
+        // ============================================================
+        function renderSection1(data, dark, readOnly, errors, prog) {
+            var content = '';
+            content +=
+                '<div class="grid sm:grid-cols-2 gap-x-4">';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Report Reference No. <span class="text-red-500">*</span></label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm outline-none" style="background:' +
+                (dark ? '#1a2334' : '#f3f4f6') + ';color:' + (dark ? '#94a3b8' : '#6b7280') + ';border-color:' + (
+                    dark ? '#2a3548' : '#d1d5db') + ';" value="' + data.meta.reportRef + '" disabled /></div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Lead ID <span class="text-red-500">*</span></label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm outline-none" style="background:' +
+                (dark ? '#1a2334' : '#f3f4f6') + ';color:' + (dark ? '#94a3b8' : '#6b7280') + ';border-color:' + (
+                    dark ? '#2a3548' : '#d1d5db') + ';" value="' + data.meta.leadId + '" disabled /></div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Borrower Name(s) <span class="text-red-500">*</span></label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" value="' + data.s1.borrowerNames + '" data-path="s1.borrowerNames" ' + (readOnly ?
+                    'disabled' : '') + ' />' +
+                (errors.borrowerNames ? '<p class="text-xs text-red-500 mt-1">' + errors.borrowerNames + '</p>' :
+                    '') + '</div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Co-borrower / Guarantor Name(s)</label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" value="' + data.s1.coBorrowerNames + '" data-path="s1.coBorrowerNames" ' + (readOnly ?
+                    'disabled' : '') + ' /></div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Property Owner / Mortgagor Name(s) <span class="text-red-500">*</span></label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" value="' + data.s1.mortgagorNames + '" data-path="s1.mortgagorNames" ' + (readOnly ?
+                    'disabled' : '') + ' /></div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Loan Type <span class="text-red-500">*</span></label><select class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" data-path="s1.loanType" ' + (readOnly ? 'disabled' : '') + '>';
+            content += '<option value="">Select…</option>';
+            LOAN_TYPES.forEach(function(t) {
+                content += '<option value="' + t + '" ' + (data.s1.loanType === t ? "selected" : "") + '>' +
+                    t + '</option>';
+            });
+            content += '</select></div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Purpose of Mortgage <span class="text-red-500">*</span></label><select class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" data-path="s1.mortgagePurpose" ' + (readOnly ? 'disabled' : '') + '>';
+            content += '<option value="">Select…</option>';
+            MORTGAGE_PURPOSE.forEach(function(t) {
+                content += '<option value="' + t + '" ' + (data.s1.mortgagePurpose === t ? "selected" : "") +
+                    '>' + t + '</option>';
+            });
+            content += '</select></div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Mode of Mortgage <span class="text-red-500">*</span></label><div class="flex flex-wrap gap-3">';
+            ["Equitable mortgage", "Registered mortgage"].forEach(function(o) {
+                var checked = data.s1.mortgageMode === o;
+                var bg = checked ? (dark ? '#1e2440' : '#eef2ff') : (dark ? 'transparent' : 'transparent');
+                var borderColor = checked ? (dark ? '#8b93f8' : '#4f46e5') : (dark ? '#2a3548' : '#d1d5db');
+                content +=
+                    '<label class="flex items-center gap-2 px-3 border rounded-lg cursor-pointer" style="border-color:' +
+                    borderColor + ';background:' + bg + ';color:' + (dark ? '#e5e7eb' : '#1f2937') +
+                    ';"><input type="radio" name="mortgageMode" value="' + o + '" ' + (checked ?
+                        'checked' : '') + ' data-path="s1.mortgageMode" ' + (readOnly ? 'disabled' : '') +
+                    ' class="accent-indigo-600" /><span class="text-sm">' + o + '</span></label>';
+            });
+            content += '</div></div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Advocate / Legal Checker Name <span class="text-red-500">*</span></label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" value="' + data.s1.advocateName + '" data-path="s1.advocateName" ' + (readOnly ?
+                    'disabled' : '') + ' /></div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Panel Code</label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" value="' + data.s1.panelCode + '" data-path="s1.panelCode" ' + (readOnly ? 'disabled' :
+                    '') + ' /></div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Report Date <span class="text-red-500">*</span></label><input type="date" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" value="' + data.meta.reportDate + '" data-path="meta.reportDate" ' + (readOnly ?
+                    'disabled' : '') + ' /></div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">File Reference</label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" value="' + data.s1.fileReference + '" data-path="s1.fileReference" ' + (readOnly ?
+                    'disabled' : '') + ' /></div>';
+            content += '</div>';
+
+            return renderAccordion("1. Case Identification", "s1", content, prog.s1, !!errors.borrowerNames, dark);
+        }
+
+        // ============================================================
+        //  RENDER: SECTION 2
+        // ============================================================
+        function renderSection2(data, dark, readOnly, errors, prog) {
+            var content = '';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Full Property Address <span class="text-red-500">*</span></label><textarea rows="3" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" data-path="s2.address" ' + (readOnly ? 'disabled' : '') + '>' + data.s2.address +
+                '</textarea>' + (errors.address ? '<p class="text-xs text-red-500 mt-1">' + errors.address +
+                    '</p>' : '') + '</div>';
+            content +=
+                '<div class="grid sm:grid-cols-2 gap-x-4">';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Property Type <span class="text-red-500">*</span></label><select class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" data-path="s2.propertyType" ' + (readOnly ? 'disabled' : '') + '>';
+            content += '<option value="">Select…</option>';
+            PROPERTY_TYPES.forEach(function(t) {
+                content += '<option value="' + t + '" ' + (data.s2.propertyType === t ? "selected" : "") +
+                    '>' + t + '</option>';
+            });
+            content += '</select></div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Survey/CTS/Khasra/Plot/Flat No. & Building <span class="text-red-500">*</span></label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" value="' + data.s2.surveyCts + '" data-path="s2.surveyCts" ' + (readOnly ? 'disabled' :
+                    '') + ' /></div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Locality</label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" value="' + data.s2.locality + '" data-path="s2.locality" ' + (readOnly ? 'disabled' :
+                    '') + ' /></div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Taluka</label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" value="' + data.s2.taluka + '" data-path="s2.taluka" ' + (readOnly ? 'disabled' : '') +
+                ' /></div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">District <span class="text-red-500">*</span></label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" value="' + data.s2.district + '" data-path="s2.district" ' + (readOnly ? 'disabled' :
+                    '') + ' /></div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">State <span class="text-red-500">*</span></label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" value="' + data.s2.state + '" data-path="s2.state" ' + (readOnly ? 'disabled' : '') +
+                ' /></div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Pincode <span class="text-red-500">*</span></label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" value="' + data.s2.pincode + '" data-path="s2.pincode" ' + (readOnly ? 'disabled' :
+                    '') + ' />' + (errors.pincode ? '<p class="text-xs text-red-500 mt-1">' + errors.pincode +
+                    '</p>' : '') + '</div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Approx. Built-up Area (sq ft)</label><input type="number" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" value="' + data.s2.areaBuiltUp + '" data-path="s2.areaBuiltUp" ' + (readOnly ?
+                    'disabled' : '') + ' /></div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Approx. Land Area (sq m / acres)</label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" value="' + data.s2.areaLand + '" data-path="s2.areaLand" ' + (readOnly ? 'disabled' :
+                    '') + ' /></div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Landmark</label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" value="' + data.s2.landmark + '" data-path="s2.landmark" ' + (readOnly ? 'disabled' :
+                    '') + ' /></div>';
+            content += '</div>';
+            content +=
+                '<p class="text-sm font-medium mb-1" style="color:' + (dark ? '#e5e7eb' : '#1f2937') +
+                ';">Boundaries</p>';
+            content +=
+                '<div class="grid grid-cols-2 gap-3">';
+            ["north", "south", "east", "west"].forEach(function(dir) {
+                content +=
+                    '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                    (dark ? '#e5e7eb' : '#1f2937') + ';">' + dir[0].toUpperCase() + dir.slice(1) +
+                    ' <span class="text-red-500">*</span></label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                    (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' +
+                    (dark ? '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                    ';" value="' + data.s2.boundaries[dir] + '" data-path="s2.boundaries.' + dir + '" ' +
+                    (readOnly ? 'disabled' : '') + ' /></div>';
+            });
+            content += '</div>';
+
+            return renderAccordion("2. Property Identification", "s2", content, prog.s2, !!errors.address || !!errors
+                .pincode, dark);
+        }
+
+        // ============================================================
+        //  RENDER: SECTION 3
+        // ============================================================
+        function renderSection3(data, dark, readOnly, errors, prog) {
+            var content = '<div class="space-y-3">';
+            data.s3.forEach(function(doc) {
+                var border = dark ? '#2a3548' : '#d1d5db';
+                content +=
+                    '<div class="border rounded-lg p-3 w-full" style="border-color:' + border + ';">';
+                content +=
+                    '<div class="flex flex-wrap items-center gap-2 mb-2 w-full">';
+                if (doc.custom) {
+                    content +=
+                        '<input type="text" placeholder="Other document name" class="flex-1 min-w-[150px] rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                        (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) +
+                        ';color:' + (dark ? '#e5e7eb' : '#1f2937') + ';border-color:' + border +
+                        ';" value="' + doc.name + '" data-doc-id="' + doc.id + '" data-doc-field="name" ' +
+                        (readOnly ? 'disabled' : '') + ' />';
+                } else {
+                    content +=
+                        '<p class="text-sm font-medium flex-1 min-w-[150px]" style="color:' + (dark ?
+                            '#e5e7eb' : '#1f2937') + ';">' + doc.name + '</p>';
+                }
+                content +=
+                    '<select class="rounded-lg text-xs px-2 py-1 border" style="border-color:' + border +
+                    ';background:' + (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' :
+                        '#ffffff')) + ';color:' + (dark ? '#e5e7eb' : '#1f2937') + ';" data-doc-id="' +
+                    doc.id + '" data-doc-field="copyType" ' + (readOnly ? 'disabled' : '') + '>';
+                ["Original", "Xerox"].forEach(function(opt) {
+                    content += '<option value="' + opt + '" ' + (doc.copyType === opt ? "selected" :
+                        "") + '>' + opt + '</option>';
+                });
+                content += '</select>';
+                content += '</div>';
+                content +=
+                    '<div class="flex flex-wrap items-center gap-2 w-full">';
+                content += renderUploadSlot(doc.upload, doc.id, doc.verified, readOnly, dark);
+                content +=
+                    '<input type="text" placeholder="Remarks" class="flex-1 min-w-[120px] rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                    (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (
+                        dark ? '#e5e7eb' : '#1f2937') + ';border-color:' + border +
+                    ';" value="' + doc.remarks + '" data-doc-id="' + doc.id + '" data-doc-field="remarks" ' +
+                    (readOnly ? 'disabled' : '') + ' />';
+                content += '</div>';
+                if (doc.name && doc.name.includes("Chain of title") && errors.titleLookback) {
+                    content += '<p class="text-xs text-amber-600 mt-1">⚠ ' + errors.titleLookback + '</p>';
+                }
+                content += '</div>';
+            });
+            content += '</div>';
+            if (!readOnly) {
+                content +=
+                    '<button type="button" id="addDocRow" class="mt-3 text-sm text-indigo-600 font-medium">+ Add another document row</button>';
+            }
+            return renderAccordion("3. Document Scrutiny", "s3", content, prog.s3, false, dark);
+        }
+
+        function renderUploadSlot(file, docId, verified, readOnly, dark) {
+            var border = dark ? '#2a3548' : '#d1d5db';
+            var muted = dark ? '#94a3b8' : '#6b7280';
+            var inputBg = dark ? '#0f1728' : '#ffffff';
+            var html = '<div class="flex items-center gap-2">';
+            html +=
+                '<button type="button" class="doc-upload-btn px-3 rounded-lg border border-dashed text-xs" style="border-color:' +
+                muted + ';color:' + muted + ';background:transparent;" data-doc-id="' + docId + '">' + (file ?
+                    "Replace file" : "Upload") + '</button>';
+            if (file) {
+                var label = typeof file === "string" ? file.split(".").pop().toUpperCase() : file.name.split(".")
+                    .pop().toUpperCase();
+                html +=
+                    '<div class="w-10 h-10 rounded border flex items-center justify-center text-xs overflow-hidden" style="background:' +
+                    (dark ? '#1a2334' : '#f3f4f6') + ';border-color:' + border + ';color:' + muted + ';">' +
+                    label + '</div>';
+            }
+            html +=
+                '<label class="flex items-center gap-1 text-xs" style="color:' + (dark ? '#e5e7eb' : '#1f2937') +
+                ';"><input type="checkbox" class="doc-verify-checkbox w-4 h-4 accent-green-600" data-doc-id="' +
+                docId + '" ' + (verified ? "checked" : "") + (readOnly ? "disabled" : "") +
+                ' /> Verified</label>';
+            html += '<input type="file" accept=".pdf,.jpg,.jpeg,.png" class="doc-file-input hidden" data-doc-id="' +
+                docId + '" ' + (readOnly ? "disabled" : "") + ' />';
+            html += '</div>';
+            return html;
+        }
+
+        // ============================================================
+        //  RENDER: SECTION 4
+        // ============================================================
+        function renderSection4(data, dark, readOnly, errors, prog, finalOwner) {
+            var content = '<div class="space-y-3">';
+            data.s4.rows.forEach(function(row, idx) {
+                var brokenChain = idx > 0 && data.s4.rows[idx - 1].transferee !== row.transferor;
+                var borderColor = brokenChain ? "#f87171" : (dark ? '#2a3548' : '#d1d5db');
+                var bg = brokenChain ? (dark ? '#3f1a1a' : '#fef2f2') : 'transparent';
+                content +=
+                    '<div class="border rounded-lg p-3 w-full" style="border-color:' + borderColor + ';background:' +
+                    bg + ';">';
+                content +=
+                    '<div class="grid grid-cols-2 gap-2">';
+                content +=
+                    '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                    (dark ? '#e5e7eb' : '#1f2937') + ';">Date <span class="text-red-500">*</span></label><input type="date" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                    (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (
+                        dark ? '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                    ';" value="' + row.date + '" data-title-id="' + row.id + '" data-title-field="date" ' +
+                    (readOnly ? 'disabled' : '') + ' /></div>';
+                content +=
+                    '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                    (dark ? '#e5e7eb' : '#1f2937') + ';">Doc Type</label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                    (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (
+                        dark ? '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                    ';" value="' + row.docType + '" data-title-id="' + row.id + '" data-title-field="docType" ' +
+                    (readOnly ? 'disabled' : '') + ' /></div>';
+                content +=
+                    '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                    (dark ? '#e5e7eb' : '#1f2937') + ';">Transferor</label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                    (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (
+                        dark ? '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                    ';" value="' + row.transferor + '" data-title-id="' + row.id +
+                    '" data-title-field="transferor" ' + (readOnly ? 'disabled' : '') + ' /></div>';
+                content +=
+                    '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                    (dark ? '#e5e7eb' : '#1f2937') + ';">Transferee</label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                    (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (
+                        dark ? '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                    ';" value="' + row.transferee + '" data-title-id="' + row.id +
+                    '" data-title-field="transferee" ' + (readOnly ? 'disabled' : '') + ' /></div>';
+                content +=
+                    '<div class="mb-4 col-span-2"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                    (dark ? '#e5e7eb' : '#1f2937') + ';">Registration Details</label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                    (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (
+                        dark ? '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                    ';" value="' + row.regDetails + '" data-title-id="' + row.id +
+                    '" data-title-field="regDetails" ' + (readOnly ? 'disabled' : '') + ' /></div>';
+                content += '</div>';
+                if (brokenChain) {
+                    content +=
+                        '<p class="text-xs text-red-600 mt-1">⚠ Chain break: transferee of previous entry does not match transferor here</p>';
+                }
+                content += '</div>';
+            });
+            content += '</div>';
+            if (!readOnly) {
+                content +=
+                    '<button type="button" id="addTitleRow" class="mt-3 text-sm text-indigo-600 font-medium">+ Add ownership entry</button>';
+            }
+            content +=
+                '<div class="grid sm:grid-cols-2 gap-x-4 mt-3">';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Final Owner of Record</label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm outline-none" style="background:' +
+                (dark ? '#1a2334' : '#f3f4f6') + ';color:' + (dark ? '#94a3b8' : '#6b7280') + ';border-color:' + (
+                    dark ? '#2a3548' : '#d1d5db') + ';" value="' + finalOwner + '" disabled /></div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Lookback Compliance (min ' + LOOKBACK_YEARS +
+                ' yrs) <span class="text-red-500">*</span></label><div class="flex flex-wrap gap-3">';
+            ["Yes", "No"].forEach(function(o) {
+                var checked = data.s4.lookbackConfirmed === o;
+                var bg = checked ? (dark ? '#1e2440' : '#eef2ff') : 'transparent';
+                var borderColor = checked ? (dark ? '#8b93f8' : '#4f46e5') : (dark ? '#2a3548' : '#d1d5db');
+                content +=
+                    '<label class="flex items-center gap-2 px-3 border rounded-lg cursor-pointer" style="border-color:' +
+                    borderColor + ';background:' + bg + ';color:' + (dark ? '#e5e7eb' : '#1f2937') +
+                    ';"><input type="radio" name="lookback" value="' + o + '" ' + (checked ? "checked" :
+                        "") + ' data-path="s4.lookbackConfirmed" ' + (readOnly ? 'disabled' : '') +
+                    ' class="accent-indigo-600" /><span class="text-sm">' + o + '</span></label>';
+            });
+            content += '</div>' + (errors.titleLookback ? '<p class="text-xs text-red-500 mt-1">' + errors
+                .titleLookback + '</p>' : '') + '</div>';
+            content += '</div>';
+
+            return renderAccordion("4. Title Flow / Ownership History", "s4", content, prog.s4, !!errors
+                .titleLookback, dark);
+        }
+
+        // ============================================================
+        //  RENDER: SECTION 5
+        // ============================================================
+        function renderSection5(data, dark, readOnly, errors, prog) {
+            var content = '<div class="grid sm:grid-cols-2 gap-x-4">';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">EC Search Period — From <span class="text-red-500">*</span></label><input type="date" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" value="' + data.s5.searchFrom + '" data-path="s5.searchFrom" ' + (readOnly ? 'disabled' :
+                    '') + ' />' + (errors.searchDates ? '<p class="text-xs text-red-500 mt-1">' + errors
+                    .searchDates + '</p>' : '') + '</div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">EC Search Period — To <span class="text-red-500">*</span></label><input type="date" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" value="' + data.s5.searchTo + '" data-path="s5.searchTo" ' + (readOnly ? 'disabled' :
+                    '') + ' />' + (errors.ecLookback ? '<p class="text-xs text-red-500 mt-1">' + errors
+                    .ecLookback + '</p>' : '') + '</div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Any Encumbrance Found? <span class="text-red-500">*</span></label><div class="flex flex-wrap gap-3">';
+            ["Yes", "No"].forEach(function(o) {
+                var checked = data.s5.encumbranceFound === o;
+                var bg = checked ? (dark ? '#1e2440' : '#eef2ff') : 'transparent';
+                var borderColor = checked ? (dark ? '#8b93f8' : '#4f46e5') : (dark ? '#2a3548' : '#d1d5db');
+                content +=
+                    '<label class="flex items-center gap-2 px-3 border rounded-lg cursor-pointer" style="border-color:' +
+                    borderColor + ';background:' + bg + ';color:' + (dark ? '#e5e7eb' : '#1f2937') +
+                    ';"><input type="radio" name="encFound" value="' + o + '" ' + (checked ? "checked" :
+                        "") + ' data-path="s5.encumbranceFound" ' + (readOnly ? 'disabled' : '') +
+                    ' class="accent-indigo-600" /><span class="text-sm">' + o + '</span></label>';
+            });
+            content += '</div></div>';
+            if (data.s5.encumbranceFound === "Yes") {
+                content +=
+                    '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                    (dark ? '#e5e7eb' : '#1f2937') + ';">Encumbrance Type</label><select class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                    (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (
+                        dark ? '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                    ';" data-path="s5.encumbranceType" ' + (readOnly ? 'disabled' : '') + '>';
+                content += '<option value="">Select…</option>';
+                ["Mortgage", "Lien", "Charge", "Court attachment", "Lis pendens"].forEach(function(t) {
+                    content += '<option value="' + t + '" ' + (data.s5.encumbranceType === t ?
+                        "selected" : "") + '>' + t + '</option>';
+                });
+                content += '</select></div>';
+            }
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Outstanding Loan / Charge Amount</label><input type="number" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" value="' + data.s5.outstandingAmount + '" data-path="s5.outstandingAmount" ' + (readOnly ?
+                    'disabled' : '') + ' /></div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Search Conducted By</label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" value="' + data.s5.searchBy + '" data-path="s5.searchBy" ' + (readOnly ? 'disabled' :
+                    '') + ' /></div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Search Conducted At (SRO)</label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" value="' + data.s5.searchAt + '" data-path="s5.searchAt" ' + (readOnly ? 'disabled' :
+                    '') + ' /></div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Search Date</label><input type="date" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" value="' + data.s5.searchDate + '" data-path="s5.searchDate" ' + (readOnly ? 'disabled' :
+                    '') + ' /></div>';
+            content += '</div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Remarks</label><textarea rows="3" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" data-path="s5.remarks" ' + (readOnly ? 'disabled' : '') + '>' + data.s5.remarks +
+                '</textarea></div>';
+
+            return renderAccordion("5. Encumbrance & Search Findings", "s5", content, prog.s5, !!errors
+                .searchDates || !!errors.ecLookback, dark);
+        }
+
+        // ============================================================
+        //  RENDER: SECTION 6
+        // ============================================================
+        function renderSection6(data, dark, readOnly, prog) {
+            var content = '<div class="grid sm:grid-cols-2 gap-x-4">';
+            var fields = [
+                { key: "taxUpToDate", label: "Property Tax Up to Date?", options: ["Yes", "No"] },
+                { key: "electricityWaterInOwnerName", label: "Electricity/Water Bill in Owner's Name?", options: [
+                        "Yes", "No"
+                    ] },
+                { key: "maintenanceDuesCleared", label: "Society Maintenance Dues Cleared?", options: ["Yes", "No",
+                        "NA"
+                    ] },
+                { key: "statutoryDuesPending", label: "Statutory Dues Pending?", options: ["Yes", "No"] },
+                { key: "approvedPlanAvailable", label: "Approved Plan Available?", options: ["Yes", "No"] },
+                { key: "ocCcAvailable", label: "OC / CC Available?", options: ["Yes", "No"] },
+                { key: "unauthorizedConstruction", label: "Unauthorized / Deviated Construction?", options: ["Yes",
+                        "No"
+                    ] },
+                { key: "conversionOrderObtained", label: "Conversion Order Obtained?", options: ["Yes", "No",
+                        "NA"] },
+            ];
+            fields.forEach(function(f) {
+                var val = data.s6[f.key] || "";
+                content +=
+                    '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                    (dark ? '#e5e7eb' : '#1f2937') + ';">' + f.label +
+                    (f.key === "taxUpToDate" ? ' <span class="text-red-500">*</span>' : '') +
+                    '</label><div class="flex flex-wrap gap-3">';
+                f.options.forEach(function(o) {
+                    var checked = val === o;
+                    var bg = checked ? (dark ? '#1e2440' : '#eef2ff') : 'transparent';
+                    var borderColor = checked ? (dark ? '#8b93f8' : '#4f46e5') : (dark ? '#2a3548' :
+                        '#d1d5db');
+                    content +=
+                        '<label class="flex items-center gap-2 px-3 border rounded-lg cursor-pointer" style="border-color:' +
+                        borderColor + ';background:' + bg + ';color:' + (dark ? '#e5e7eb' : '#1f2937') +
+                        ';"><input type="radio" name="s6_' + f.key + '" value="' + o + '" ' + (
+                            checked ? "checked" : "") + ' data-path="s6.' + f.key + '" ' + (
+                            readOnly ? 'disabled' : '') +
+                        ' class="accent-indigo-600" /><span class="text-sm">' + o +
+                        '</span></label>';
+                });
+                content += '</div></div>';
+            });
+            content += '</div>';
+            if (data.s6.statutoryDuesPending === "Yes") {
+                content +=
+                    '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                    (dark ? '#e5e7eb' : '#1f2937') + ';">Statutory Dues Amount</label><input type="number" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                    (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (
+                        dark ? '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                    ';" value="' + data.s6.statutoryDuesAmount + '" data-path="s6.statutoryDuesAmount" ' + (
+                        readOnly ? 'disabled' : '') + ' /></div>';
+            }
+            if (data.s6.unauthorizedConstruction === "Yes") {
+                content +=
+                    '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                    (dark ? '#e5e7eb' : '#1f2937') + ';">Unauthorized Construction Details</label><textarea rows="3" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                    (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (
+                        dark ? '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                    ';" data-path="s6.unauthorizedDetails" ' + (readOnly ? 'disabled' : '') + '>' + data.s6
+                    .unauthorizedDetails + '</textarea></div>';
+            }
+
+            return renderAccordion("6. Statutory & Tax Status", "s6", content, prog.s6, false, dark);
+        }
+
+        // ============================================================
+        //  RENDER: SECTION 7
+        // ============================================================
+        function renderSection7(data, dark, readOnly, prog) {
+            var content = '';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Any Court Case / Litigation / Dispute Pending? <span class="text-red-500">*</span></label><div class="flex flex-wrap gap-3">';
+            ["Yes", "No"].forEach(function(o) {
+                var checked = data.s7.litigationPending === o;
+                var bg = checked ? (dark ? '#1e2440' : '#eef2ff') : 'transparent';
+                var borderColor = checked ? (dark ? '#8b93f8' : '#4f46e5') : (dark ? '#2a3548' : '#d1d5db');
+                content +=
+                    '<label class="flex items-center gap-2 px-3 border rounded-lg cursor-pointer" style="border-color:' +
+                    borderColor + ';background:' + bg + ';color:' + (dark ? '#e5e7eb' : '#1f2937') +
+                    ';"><input type="radio" name="s7_litig" value="' + o + '" ' + (checked ? "checked" :
+                        "") + ' data-path="s7.litigationPending" ' + (readOnly ? 'disabled' : '') +
+                    ' class="accent-indigo-600" /><span class="text-sm">' + o + '</span></label>';
+            });
+            content += '</div></div>';
+
+            if (data.s7.litigationPending === "Yes") {
+                content +=
+                    '<div class="grid sm:grid-cols-2 gap-x-4">';
+                [
+                    ["courtName", "Court Name"],
+                    ["caseNo", "Case No."],
+                    ["parties", "Parties"],
+                    ["caseStatus", "Current Status"]
+                ].forEach(function(f) {
+                    content +=
+                        '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                        (dark ? '#e5e7eb' : '#1f2937') + ';">' + f[1] +
+                        '</label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                        (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) +
+                        ';color:' + (dark ? '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ?
+                            '#2a3548' : '#d1d5db') + ';" value="' + data.s7[f[0]] + '" data-path="s7.' +
+                        f[0] + '" ' + (readOnly ? 'disabled' : '') + ' /></div>';
+                });
+                content +=
+                    '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                    (dark ? '#e5e7eb' : '#1f2937') + ';">Next Hearing Date</label><input type="date" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                    (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (
+                        dark ? '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                    ';" value="' + data.s7.nextHearing + '" data-path="s7.nextHearing" ' + (readOnly ?
+                        'disabled' : '') + ' /></div>';
+                content += '</div>';
+            }
+
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Notice/Claim from Revenue or Municipal Authority?</label><div class="flex flex-wrap gap-3">';
+            ["Yes", "No"].forEach(function(o) {
+                var checked = data.s7.revenueNotice === o;
+                var bg = checked ? (dark ? '#1e2440' : '#eef2ff') : 'transparent';
+                var borderColor = checked ? (dark ? '#8b93f8' : '#4f46e5') : (dark ? '#2a3548' : '#d1d5db');
+                content +=
+                    '<label class="flex items-center gap-2 px-3 border rounded-lg cursor-pointer" style="border-color:' +
+                    borderColor + ';background:' + bg + ';color:' + (dark ? '#e5e7eb' : '#1f2937') +
+                    ';"><input type="radio" name="s7_rev" value="' + o + '" ' + (checked ? "checked" :
+                        "") + ' data-path="s7.revenueNotice" ' + (readOnly ? 'disabled' : '') +
+                    ' class="accent-indigo-600" /><span class="text-sm">' + o + '</span></label>';
+            });
+            content += '</div></div>';
+            if (data.s7.revenueNotice === "Yes") {
+                content +=
+                    '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                    (dark ? '#e5e7eb' : '#1f2937') + ';">Details</label><textarea rows="3" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                    (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (
+                        dark ? '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                    ';" data-path="s7.revenueNoticeDetails" ' + (readOnly ? 'disabled' : '') + '>' + data.s7
+                    .revenueNoticeDetails + '</textarea></div>';
+            }
+
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Arbitration / Mediation Pending?</label><div class="flex flex-wrap gap-3">';
+            ["Yes", "No"].forEach(function(o) {
+                var checked = data.s7.arbitrationPending === o;
+                var bg = checked ? (dark ? '#1e2440' : '#eef2ff') : 'transparent';
+                var borderColor = checked ? (dark ? '#8b93f8' : '#4f46e5') : (dark ? '#2a3548' : '#d1d5db');
+                content +=
+                    '<label class="flex items-center gap-2 px-3 border rounded-lg cursor-pointer" style="border-color:' +
+                    borderColor + ';background:' + bg + ';color:' + (dark ? '#e5e7eb' : '#1f2937') +
+                    ';"><input type="radio" name="s7_arb" value="' + o + '" ' + (checked ? "checked" :
+                        "") + ' data-path="s7.arbitrationPending" ' + (readOnly ? 'disabled' : '') +
+                    ' class="accent-indigo-600" /><span class="text-sm">' + o + '</span></label>';
+            });
+            content += '</div></div>';
+            if (data.s7.arbitrationPending === "Yes") {
+                content +=
+                    '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                    (dark ? '#e5e7eb' : '#1f2937') + ';">Details</label><textarea rows="3" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                    (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (
+                        dark ? '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                    ';" data-path="s7.arbitrationDetails" ' + (readOnly ? 'disabled' : '') + '>' + data.s7
+                    .arbitrationDetails + '</textarea></div>';
+            }
+
+            return renderAccordion("7. Litigation Search", "s7", content, prog.s7, false, dark);
+        }
+
+        // ============================================================
+        //  RENDER: SECTION 8
+        // ============================================================
+        function renderSection8(data, dark, readOnly, risk, prog) {
+            var content = '<div class="grid sm:grid-cols-2 gap-x-4">';
+            var fields8 = [
+                { key: "titleStatus", label: "Title Status", options: ["Clear", "Conditional", "Defective"] },
+                { key: "ownerCapacity", label: "Owner Capacity to Mortgage", options: ["Confirmed", "Doubtful"] },
+                { key: "poaValid", label: "POA Valid & Registered?", options: ["Yes", "No", "NA"] },
+                { key: "freeFromEncumbrance", label: "Property Free from Encumbrance?", options: ["Yes", "No"] },
+                { key: "thirdPartyNocRequired", label: "Third-Party NOC Required?", options: ["Yes", "No"] },
+            ];
+            fields8.forEach(function(f) {
+                var val = data.s8[f.key] || "";
+                content +=
+                    '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                    (dark ? '#e5e7eb' : '#1f2937') + ';">' + f.label +
+                    (f.key === "titleStatus" || f.key === "ownerCapacity" ? ' <span class="text-red-500">*</span>' :
+                        '') +
+                    '</label><div class="flex flex-wrap gap-3">';
+                f.options.forEach(function(o) {
+                    var checked = val === o;
+                    var bg = checked ? (dark ? '#1e2440' : '#eef2ff') : 'transparent';
+                    var borderColor = checked ? (dark ? '#8b93f8' : '#4f46e5') : (dark ? '#2a3548' :
+                        '#d1d5db');
+                    content +=
+                        '<label class="flex items-center gap-2 px-3 border rounded-lg cursor-pointer" style="border-color:' +
+                        borderColor + ';background:' + bg + ';color:' + (dark ? '#e5e7eb' : '#1f2937') +
+                        ';"><input type="radio" name="s8_' + f.key + '" value="' + o + '" ' + (
+                            checked ? "checked" : "") + ' data-path="s8.' + f.key + '" ' + (
+                            readOnly ? 'disabled' : '') +
+                        ' class="accent-indigo-600" /><span class="text-sm">' + o +
+                        '</span></label>';
+                });
+                content += '</div></div>';
+            });
+            content += '</div>';
+            if (data.s8.thirdPartyNocRequired === "Yes") {
+                content +=
+                    '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                    (dark ? '#e5e7eb' : '#1f2937') + ';">NOC From Whom</label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                    (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (
+                        dark ? '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                    ';" value="' + data.s8.thirdPartyNocFrom + '" data-path="s8.thirdPartyNocFrom" ' + (
+                        readOnly ? 'disabled' : '') + ' /></div>';
+            }
+
+            // Risk pills
+            var riskItems = [
+                { label: "Title Risk", level: risk.titleRisk },
+                { label: "Doc Completeness", level: risk.documentCompleteness },
+                { label: "Encumbrance Risk", level: risk.encumbranceRisk },
+                { label: "Litigation Risk", level: risk.litigationRisk },
+            ];
+            content +=
+                '<div class="rounded-lg p-3 mt-2 grid grid-cols-2 sm:grid-cols-4 gap-3" style="background:' + (
+                    dark ? '#101828' : '#f9fafb') + ';">';
+            riskItems.forEach(function(item) {
+                content +=
+                    '<div><p class="text-xs" style="color:' + (dark ? '#94a3b8' : '#6b7280') + ';">' + item
+                    .label + '</p><span class="risk-pill ' + item.level + '">' + item.level + '</span></div>';
+            });
+            content += '</div>';
+
+            if (risk.missingDocs.length > 0) {
+                content +=
+                    '<div class="mt-3 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3" style="' +
+                    (dark ? 'background:#78350f;color:#fde68a;border-color:#92400e;' :
+                        'background:#fffbeb;color:#92400e;border-color:#fcd34d;') + '">Missing / unverified documents: ' +
+                    risk.missingDocs.join(", ") + '</div>';
+            }
+
+            // Conditions
+            content +=
+                '<p class="text-sm font-medium mt-4 mb-1" style="color:' + (dark ? '#e5e7eb' : '#1f2937') +
+                ';">Conditions Precedent to Disbursement</p>';
+            data.s8.conditions.forEach(function(c) {
+                content +=
+                    '<div class="flex gap-2 mb-2">';
+                content +=
+                    '<input type="text" placeholder="Condition" class="flex-1 rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                    (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (
+                        dark ? '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                    ';" value="' + c.text + '" data-cond-id="' + c.id + '" data-cond-field="text" ' + (
+                        readOnly ? 'disabled' : '') + ' />';
+                content +=
+                    '<input type="date" class="rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                    (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (
+                        dark ? '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                    ';" value="' + c.dueDate + '" data-cond-id="' + c.id + '" data-cond-field="dueDate" ' + (
+                        readOnly ? 'disabled' : '') + ' />';
+                content += '</div>';
+            });
+            if (!readOnly) {
+                content +=
+                    '<button type="button" id="addCondition" class="text-sm text-indigo-600 font-medium">+ Add condition</button>';
+            }
+
+            return renderAccordion("8. Mortgageability Assessment", "s8", content, prog.s8, false, dark);
+        }
+
+        // ============================================================
+        //  RENDER: SECTION 9
+        // ============================================================
+        function renderSection9(data, dark, readOnly, prog) {
+            var content = '';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Final Opinion <span class="text-red-500">*</span></label><div class="flex flex-wrap gap-3">';
+            ["Property is fit for mortgage", "Not fit for mortgage", "Fit subject to conditions"].forEach(function(o) {
+                var checked = data.s9.finalOpinion === o;
+                var bg = checked ? (dark ? '#1e2440' : '#eef2ff') : 'transparent';
+                var borderColor = checked ? (dark ? '#8b93f8' : '#4f46e5') : (dark ? '#2a3548' : '#d1d5db');
+                content +=
+                    '<label class="flex items-center gap-2 px-3 border rounded-lg cursor-pointer" style="border-color:' +
+                    borderColor + ';background:' + bg + ';color:' + (dark ? '#e5e7eb' : '#1f2937') +
+                    ';"><input type="radio" name="s9_opinion" value="' + o + '" ' + (checked ? "checked" :
+                        "") + ' data-path="s9.finalOpinion" ' + (readOnly ? 'disabled' : '') +
+                    ' class="accent-indigo-600" /><span class="text-sm">' + o + '</span></label>';
+            });
+            content += '</div></div>';
+
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Detailed Legal Conclusion <span class="text-red-500">*</span></label><textarea rows="5" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" data-path="s9.conclusion" ' + (readOnly ? 'disabled' : '') + '>' + data.s9.conclusion +
+                '</textarea></div>';
+
+            content +=
+                '<div class="text-xs italic border rounded-lg p-3 mb-3" style="color:' + (dark ? '#94a3b8' :
+                    '#6b7280') + ';background:' + (dark ? '#101828' : '#f9fafb') + ';border-color:' + (dark ?
+                    '#2a3548' : '#d1d5db') + ';">' + DISCLAIMER + '</div>';
+
+            content +=
+                '<div class="grid sm:grid-cols-2 gap-x-4">';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Advocate Name <span class="text-red-500">*</span></label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" value="' + data.s9.advocateSignName + '" data-path="s9.advocateSignName" ' + (readOnly ?
+                    'disabled' : '') + ' /></div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Bar Council Registration No. <span class="text-red-500">*</span></label><input type="text" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" value="' + data.s9.barCouncilNo + '" data-path="s9.barCouncilNo" ' + (readOnly ?
+                    'disabled' : '') + ' /></div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Date of Sign-off <span class="text-red-500">*</span></label><input type="date" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" value="' + data.s9.signOffDate + '" data-path="s9.signOffDate" ' + (readOnly ?
+                    'disabled' : '') + ' /></div>';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Signature Upload <span class="text-red-500">*</span></label>' +
+                renderUploadSlot(data.s9.signatureUpload, "s9_sig", true, readOnly, dark) + '</div>';
+            content += '</div>';
+
+            return renderAccordion("9. Final Legal Opinion", "s9", content, prog.s9, false, dark);
+        }
+
+        // ============================================================
+        //  RENDER: SECTION 10
+        // ============================================================
+        function renderSection10(data, dark, readOnly) {
+            var content = '';
+            content +=
+                '<div class="mb-4"><label class="flex items-center gap-1 text-sm font-medium mb-1" style="color:' +
+                (dark ? '#e5e7eb' : '#1f2937') + ';">Admin Comments</label><textarea rows="3" class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style="background:' +
+                (readOnly ? (dark ? '#1a2334' : '#f3f4f6') : (dark ? '#0f1728' : '#ffffff')) + ';color:' + (dark ?
+                    '#e5e7eb' : '#1f2937') + ';border-color:' + (dark ? '#2a3548' : '#d1d5db') +
+                ';" data-path="s10.adminComments" ' + (readOnly ? 'disabled' : '') + '>' + data.s10.adminComments +
+                '</textarea></div>';
+
+            if (!readOnly) {
+                content +=
+                    '<div class="flex gap-2">';
+                content +=
+                    '<button type="button" class="admin-decision flex-1 bg-green-600 text-white rounded-lg font-medium px-4 py-2" data-decision="Approve">Approve</button>';
+                content +=
+                    '<button type="button" class="admin-decision flex-1 bg-red-600 text-white rounded-lg font-medium px-4 py-2" data-decision="Reject">Reject</button>';
+                content +=
+                    '<button type="button" class="admin-decision flex-1 bg-amber-500 text-white rounded-lg font-medium px-4 py-2" data-decision="Request revision">Request Revision</button>';
+                content += '</div>';
+            }
+
+            if (data.s10.approvedAt) {
+                content +=
+                    '<p class="text-xs mt-2" style="color:' + (dark ? '#94a3b8' : '#6b7280') + ';">Decision: ' +
+                    data.s10.adminDecision + ' by ' + data.s10.reviewer + ' at ' + new Date(data.s10.approvedAt)
+                    .toLocaleString() + '</p>';
+            }
+
+            var prog = data.s10.adminDecision ? 100 : 0;
+            return renderAccordion("10. Review & Export", "s10", content, prog, false, dark);
+        }
+
+        // ============================================================
+        //  RENDER: STICKY BAR
+        // ============================================================
+        function renderStickyBar(data, dark, overall, risk, readOnly) {
+            var barBg = dark ? '#141c2c' : '#ffffff';
+            var border = dark ? '#2a3548' : '#d1d5db';
+            var text = dark ? '#e5e7eb' : '#1f2937';
+            var muted = dark ? '#94a3b8' : '#6b7280';
+            var riskColor = risk.overall === "green" ? "bg-green-500" : risk.overall === "amber" ? "bg-amber-500" :
+                "bg-red-500";
+            var statusText = state.syncStatus === "offline" ?
+                "Offline — draft saved locally, will sync when online" :
+                (state.lastSaved ? "Autosaved " + new Date(state.lastSaved).toLocaleTimeString() : "Not saved yet");
+
+            var html =
+                '<div class="app-shell fixed bottom-0 inset-x-0 border-t shadow-lg px-4 py-3 z-40" style="background:' +
+                barBg + ';border-color:' + border + ';">';
+            html +=
+                '<div class="max-w-3xl mx-auto flex items-center gap-3">';
+            html +=
+                '<div class="flex-1">';
+            html +=
+                '<div class="flex justify-between text-xs mb-1" style="color:' + text + ';">';
+            html += '<span>Completion: ' + overall + '%</span>';
+            html +=
+                '<span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full ' + riskColor +
+                '"></span> Risk: ' + risk.overall.toUpperCase() + '</span>';
+            html += '</div>';
+            html +=
+                '<div class="w-full h-2 rounded-full overflow-hidden" style="background:' + border + ';">';
+            html += '<div class="h-full ' + riskColor + '" style="width:' + overall + '%;"></div>';
+            html += '</div>';
+            html +=
+                '<p class="text-xs mt-1" style="color:' + muted + ';">' + statusText + '</p>';
+            html += '</div>';
+
+            if (!readOnly) {
+                html +=
+                    '<button type="button" id="saveDraftBtn" class="px-3 rounded-lg border text-sm font-medium" style="border-color:' +
+                    border + ';color:' + text + ';">Save Draft</button>';
+                if (isLegal() && data.meta.status === "draft") {
+                    html +=
+                        '<button type="button" id="submitBtn" class="px-3 rounded-lg bg-indigo-600 text-white text-sm font-medium">Submit</button>';
+                }
+            }
+            html +=
+                '<button type="button" id="pdfBtn" class="px-3 rounded-lg bg-slate-800 text-white text-sm font-medium">Generate PDF</button>';
+            html += '</div></div>';
+
+            return html;
+        }
+
+        // ============================================================
+        //  EVENT ATTACHMENT
+        // ============================================================
+        function attachEvents() {
+            // Theme toggle
+            var themeBtn = document.getElementById("themeToggle");
+            if (themeBtn) {
+                themeBtn.addEventListener("click", function() {
+                    state.theme = state.theme === "light" ? "dark" : "light";
+                    render();
+                });
+            }
+
+            // Role select
+            var roleSelect = document.getElementById("roleSelect");
+            if (roleSelect) {
+                roleSelect.addEventListener("change", function() {
+                    state.role = this.value;
+                    render();
+                });
+            }
+
+            // Accordion toggles
+            document.querySelectorAll(".accordion-toggle").forEach(function(btn) {
+                btn.addEventListener("click", function() {
+                    var section = this.getAttribute("data-section");
+                    if (section) toggleSection(section);
+                });
+            });
+
+            // Text inputs
+            document.querySelectorAll("[data-path]").forEach(function(el) {
+                el.addEventListener("change", function() {
+                    var path = this.getAttribute("data-path");
+                    if (path) {
+                        var val = this.type === "checkbox" ? this.checked : this.value;
+                        if (this.type === "radio") {
+                            if (this.checked) {
+                                updateData(path, this.value);
+                            }
+                        } else {
+                            updateData(path, val);
+                        }
+                    }
+                });
+                // For radio, handle click to update state immediately
+                if (el.type === "radio") {
+                    el.addEventListener("click", function() {
+                        var path = this.getAttribute("data-path");
+                        if (path && this.checked) {
+                            updateData(path, this.value);
+                        }
+                    });
+                }
+            });
+
+            // Textareas with data-path
+            document.querySelectorAll("textarea[data-path]").forEach(function(el) {
+                el.addEventListener("change", function() {
+                    var path = this.getAttribute("data-path");
+                    if (path) updateData(path, this.value);
+                });
+            });
+
+            // Select with data-path
+            document.querySelectorAll("select[data-path]").forEach(function(el) {
+                el.addEventListener("change", function() {
+                    var path = this.getAttribute("data-path");
+                    if (path) updateData(path, this.value);
+                });
+            });
+
+            // Document rows - name field (custom)
+            document.querySelectorAll("[data-doc-id][data-doc-field='name']").forEach(function(el) {
+                el.addEventListener("change", function() {
+                    var id = this.getAttribute("data-doc-id");
+                    var val = this.value;
+                    var data = state.data;
+                    var idx = data.s3.findIndex(function(d) { return d.id === id; });
+                    if (idx !== -1) {
+                        data.s3[idx].name = val;
+                        state.data = data;
+                        render();
+                    }
+                });
+            });
+
+            // Document rows - copyType
+            document.querySelectorAll("[data-doc-id][data-doc-field='copyType']").forEach(function(el) {
+                el.addEventListener("change", function() {
+                    var id = this.getAttribute("data-doc-id");
+                    var val = this.value;
+                    var data = state.data;
+                    var idx = data.s3.findIndex(function(d) { return d.id === id; });
+                    if (idx !== -1) {
+                        data.s3[idx].copyType = val;
+                        state.data = data;
+                        render();
+                    }
+                });
+            });
+
+            // Document rows - remarks
+            document.querySelectorAll("[data-doc-id][data-doc-field='remarks']").forEach(function(el) {
+                el.addEventListener("change", function() {
+                    var id = this.getAttribute("data-doc-id");
+                    var val = this.value;
+                    var data = state.data;
+                    var idx = data.s3.findIndex(function(d) { return d.id === id; });
+                    if (idx !== -1) {
+                        data.s3[idx].remarks = val;
+                        state.data = data;
+                        render();
+                    }
+                });
+            });
+
+            // Document verify checkboxes
+            document.querySelectorAll(".doc-verify-checkbox").forEach(function(el) {
+                el.addEventListener("change", function() {
+                    var id = this.getAttribute("data-doc-id");
+                    var checked = this.checked;
+                    var data = state.data;
+                    var idx = data.s3.findIndex(function(d) { return d.id === id; });
+                    if (idx !== -1) {
+                        data.s3[idx].verified = checked;
+                        state.data = data;
+                        render();
+                    }
+                });
+            });
+
+            // Document upload buttons
+            document.querySelectorAll(".doc-upload-btn").forEach(function(btn) {
+                btn.addEventListener("click", function() {
+                    var id = this.getAttribute("data-doc-id");
+                    var input = document.querySelector('.doc-file-input[data-doc-id="' + id + '"]');
+                    if (input) input.click();
+                });
+            });
+
+            document.querySelectorAll(".doc-file-input").forEach(function(el) {
+                el.addEventListener("change", function() {
+                    var id = this.getAttribute("data-doc-id");
+                    var file = this.files[0];
+                    if (file) {
+                        var data = state.data;
+                        var idx = data.s3.findIndex(function(d) { return d.id === id; });
+                        if (idx !== -1) {
+                            data.s3[idx].upload = file;
+                            state.data = data;
+                            render();
+                        }
+                    }
+                });
+            });
+
+            // Title rows
+            document.querySelectorAll("[data-title-id][data-title-field]").forEach(function(el) {
+                el.addEventListener("change", function() {
+                    var id = this.getAttribute("data-title-id");
+                    var field = this.getAttribute("data-title-field");
+                    var val = this.value;
+                    var data = state.data;
+                    var idx = data.s4.rows.findIndex(function(r) { return r.id === id; });
+                    if (idx !== -1) {
+                        data.s4.rows[idx][field] = val;
+                        state.data = data;
+                        render();
+                    }
+                });
+            });
+
+            // Conditions
+            document.querySelectorAll("[data-cond-id][data-cond-field]").forEach(function(el) {
+                el.addEventListener("change", function() {
+                    var id = this.getAttribute("data-cond-id");
+                    var field = this.getAttribute("data-cond-field");
+                    var val = this.value;
+                    var data = state.data;
+                    var idx = data.s8.conditions.findIndex(function(c) { return c.id === id; });
+                    if (idx !== -1) {
+                        data.s8.conditions[idx][field] = val;
+                        state.data = data;
+                        render();
+                    }
+                });
+            });
+
+            // Add document row
+            var addDocBtn = document.getElementById("addDocRow");
+            if (addDocBtn) {
+                addDocBtn.addEventListener("click", function() {
+                    var data = state.data;
+                    data.s3.push({ id: uid(), name: "", upload: null, copyType: "Xerox", verified: false,
+                        remarks: "", custom: true });
+                    state.data = data;
+                    render();
+                });
+            }
+
+            // Add title row
+            var addTitleBtn = document.getElementById("addTitleRow");
+            if (addTitleBtn) {
+                addTitleBtn.addEventListener("click", function() {
+                    var data = state.data;
+                    data.s4.rows.push({ id: uid(), date: "", transferor: "", transferee: "",
+                        docType: "", regDetails: "" });
+                    state.data = data;
+                    render();
+                });
+            }
+
+            // Add condition
+            var addCondBtn = document.getElementById("addCondition");
+            if (addCondBtn) {
+                addCondBtn.addEventListener("click", function() {
+                    var data = state.data;
+                    data.s8.conditions.push({ id: uid(), text: "", dueDate: "" });
+                    state.data = data;
+                    render();
+                });
+            }
+
+            // Save draft
+            var saveBtn = document.getElementById("saveDraftBtn");
+            if (saveBtn) {
+                saveBtn.addEventListener("click", function() {
+                    state.lastSaved = new Date();
+                    render();
+                    alert("Draft saved.");
+                });
+            }
+
+            // Submit
+            var submitBtn = document.getElementById("submitBtn");
+            if (submitBtn) {
+                submitBtn.addEventListener("click", function() {
+                    var errors = validate(state.data);
+                    if (Object.keys(errors).length) {
+                        alert("Please resolve validation errors before submitting:\n" + Object.values(errors)
+                            .join("\n"));
+                        return;
+                    }
+                    updateData("meta.status", "submitted");
+                    alert("Report submitted for review.");
+                });
+            }
+
+            // Admin decision
+            document.querySelectorAll(".admin-decision").forEach(function(btn) {
+                btn.addEventListener("click", function() {
+                    var decision = this.getAttribute("data-decision");
+                    if (decision) {
+                        var data = state.data;
+                        data.s10.adminDecision = decision;
+                        data.s10.reviewer = "Admin (Sachin Kale)";
+                        data.s10.approvedAt = new Date().toISOString();
+                        data.meta.status = decision === "Approve" ? "approved" : decision === "Reject" ?
+                            "rejected" : "under_review";
+                        state.data = data;
+                        render();
+                        alert("Decision: " + decision);
+                    }
+                });
+            });
+
+            // PDF / Print
+            var pdfBtn = document.getElementById("pdfBtn");
+            if (pdfBtn) {
+                pdfBtn.addEventListener("click", function() {
+                    window.print();
+                });
+            }
+
+            // Auto-save: update data on any input change (already handled via render triggers)
+        }
+
+        // ============================================================
+        //  INITIAL RENDER
+        // ============================================================
+        // Auto-generate conclusion on load
+        (function init() {
+            var data = seedData();
+            data.s9.conclusion = opinionTemplate(data.s9.finalOpinion, data.meta);
+            state.data = data;
+            render();
+
+            // Autosave timer
+            setInterval(function() {
+                state.lastSaved = new Date();
+                // Only re-render if not currently typing (simple approach)
+            }, 5000);
+        })();
+
+        // Handle offline/online
+        window.addEventListener("online", function() {
+            state.syncStatus = "syncing";
+            render();
+            setTimeout(function() {
+                state.syncStatus = "online";
+                render();
+            }, 1200);
+        });
+        window.addEventListener("offline", function() {
+            state.syncStatus = "offline";
+            render();
+        });
+    </script>
+
+</body>
+</html>
