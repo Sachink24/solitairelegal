@@ -1,0 +1,24 @@
+solitaire-finz-mart-backend/
+├── server.js
+├── package.json
+├── .env
+├── .gitignore
+├── README.md
+├── uploads/
+│   └── .gitkeep
+├── models/
+│   ├── Lead.js
+│   └── LegalReport.js
+├── routes/
+│   ├── leads.js
+│   ├── reports.js
+│   └── upload.js
+├── controllers/
+│   ├── leadController.js
+│   └── reportController.js
+├── middleware/
+│   └── auth.js
+├── config/
+│   └── database.js
+└── scripts/
+    └── seedLeads.js

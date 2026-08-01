@@ -1,0 +1,20 @@
+├── server.js
+├── package.json
+├── .env
+├── models/
+│   ├── Lead.js
+│   └── LegalReport.js
+├── routes/
+│   ├── leads.js
+│   ├── reports.js
+│   └── upload.js
+├── controllers/
+│   ├── leadController.js
+│   └── reportController.js
+├── middleware/
+│   └── auth.js
+├── config/
+│   └── database.js
+├── scripts/
+│   └── seedLeads.js
+└── uploads/
